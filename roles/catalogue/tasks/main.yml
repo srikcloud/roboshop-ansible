@@ -2,5 +2,19 @@
   ansible.builtin.include_role:
     name: common
     tasks_from: nodejs
-  
+- name: copy mongodb repo file
+  ansible.builtin.copy:
+    src: mongo.repo
+    dest: /etc/yum.repos.d/mongo.repo
+- name: Install mongodb
+  ansible.builtin.dnf:
+    src: mongodb-mongosh
+    state: latest
+- name: load master data
+  ansible.builtin.shell: mongosh --host mongodb-dev.srikanth553.store </app/db/master-data.js
+- name: Run systemd_setup
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: systemd_setup
+
 
