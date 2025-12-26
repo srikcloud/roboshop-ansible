@@ -10,12 +10,12 @@
 
 - name: Install mongodb
   ansible.builtin.dnf:
-    src: mongodb-mongosh
+    name: mongodb-mongosh
     state: latest
 
 - name: load master data
   ansible.builtin.shell: mongosh --host mongodb-dev.srikanth553.store </app/db/master-data.js
-  
+
 - name: Run systemd_setup
   ansible.builtin.include_role:
     name: common
