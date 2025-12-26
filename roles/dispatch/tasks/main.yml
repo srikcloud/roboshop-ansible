@@ -36,7 +36,7 @@
   ansible.builtin.command: go mod init {{ app_name }}
   args:
     chdir: /app
-    creates: /app/go.mod   # ✅ FIXED LOCATION
+    creates: /app/go.mod 
   become_user: roboshop
 
 - name: Download Go dependencies
@@ -49,7 +49,7 @@
   ansible.builtin.command: go build
   args:
     chdir: /app
-    creates: "/app/{{ app_name }}"   # ✅ idempotent build
+    creates: "/app/{{ app_name }}" 
   become_user: roboshop
 
 - name: Copy systemd service file
