@@ -1,21 +1,17 @@
-# id roboshop || useradd roboshop
-#     rm -rf /app
-#     mkdir /app
-#     cd /app
-#     curl -L -o /tmp/${component_name}.zip https://roboshop-artifacts.s3.amazonaws.com/${component_name}-v3.zip 
-#     unzip /tmp/${component_name}.zip
-
-- name: add app user
+- name: add application user
   ansible.builtin.user:
     name: roboshop
-- name: delete old appp directory
+
+- name: delete old app directory
   ansible.builtin.file:
     path: /app
     state: absent
-- name: create appp directory
+
+- name: create app directory
   ansible.builtin.file:
     path: /app
     state: directory
+
 - name: download and extract app content
   ansible.builtin.unarchive:
     src: https://roboshop-artifacts.s3.amazonaws.com/{{ app_name }}-v3.zip
