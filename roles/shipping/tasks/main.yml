@@ -3,6 +3,20 @@
     name: common
     tasks_from: java
 
+- name: install mysql
+  ansible.builtin.dnf:
+    name: mysql
+    state: latest
+
+- name: load schema
+  ansible.builtin.shell: mysql -h mysql-dev.srikanth553.store -uroot -pRoboShop@1 < /app/db/schema.sql
+
+- name: load app-user
+  ansible.builtin.shell: mysql -h mysql-dev.srikanth553.store -uroot -pRoboShop@1 < /app/db/app-user.sql
+
+- name: load master-data
+  ansible.builtin.shell: mysql -h mysql-dev.srikanth553.store -uroot -pRoboShop@1 < /app/db/master-data.sql
+
 - name: Run systemd_setup
   ansible.builtin.include_role:
     name: common
