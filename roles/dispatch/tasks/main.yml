@@ -1,0 +1,85 @@
+# dnf install golang -y
+
+# cp dispatch.service /etc/systemd/system/dispatch.service
+# useradd roboshop
+# mkdir /app
+# curl -L -o /tmp/dispatch.zip https://roboshop-artifacts.s3.amazonaws.com/dispatch-v3.zip 
+# cd /app 
+# unzip /tmp/dispatch.zip
+# cd /app 
+# go mod init dispatch
+# go get 
+# go build
+
+# systemctl daemon-reload
+# systemctl enable dispatch 
+# systemctl start dispatch
+
+- name: Install golang
+  ansible.builtin.dnf:
+    name: golang
+    state: latest
+
+- name: Ensure roboshop user exists
+  ansible.builtin.user:
+    name: roboshop
+
+- name: Remove old app directory
+  ansible.builtin.file:
+    path: /app
+    state: absent
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+
+- name: Download dispatch app
+  ansible.builtin.get_url:
+    url: "https://roboshop-artifacts.s3.amazonaws.com/{{ app_name }}-v3.zip"
+    dest: "/tmp/{{ app_name }}.zip"
+  
+  
+- name: Extract dispatch app
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ app_name }}.zip"
+    dest: /app
+    remote_src: yes
+    owner: roboshop
+    group: roboshop
+
+- name: Initialize Go module
+  ansible.builtin.command: go mod init {{ app_name }}
+  args:
+    chdir: /app
+  become_user: roboshop
+  creates: /app/go.mod
+
+- name: Download Go dependencies
+  ansible.builtin.command: go get
+  args:
+    chdir: /app
+  become_user: roboshop
+
+- name: Build application
+  ansible.builtin.command: go build
+  args:
+    chdir: /app
+  become_user: roboshop
+
+- name: Copy systemd service file
+  ansible.builtin.copy:
+    src: "{{ app_name }}.service"
+    dest: "/etc/systemd/system/{{ app_name }}.service"
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start and enable service
+  ansible.builtin.systemd:
+    name: "{{ app_name }}"
+    state: started
+    enabled: yes
