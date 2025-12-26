@@ -1,0 +1,34 @@
+# if [ -z "$1" ]; then
+#   echo Input password is missing
+#   exit 1
+# fi
+# cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
+# dnf install rabbitmq-server -y
+# systemctl enable rabbitmq-server
+# systemctl start rabbitmq-server
+# rabbitmqctl add_user roboshop $1
+# rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+
+- name: copy rabbitmq repo file
+  ansible.builtin.copy:
+    src: rabbitmq.repo
+    dest: /etc/yum.repos.d/rabbitmq.repo
+- name: Install rabbitmq server
+  ansible.builtin.dnf:
+    name: rabbitmq-server
+    state: latest
+- name: start rabbitmq Service
+  ansible.builtin.systemd_service:
+    name: rabbitmq-server
+    state: started
+    enabled: yes
+- name: create app user
+  community.rabbitmq.rabbitmq_user:
+    user: roboshop
+    password: roboshop123
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    state: present
+
