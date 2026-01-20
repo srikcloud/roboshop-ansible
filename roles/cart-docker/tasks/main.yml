@@ -10,9 +10,7 @@
     state: started
     ports:
       - "8080:8080"
-    env: 
+    env:
       CATALOGUE_HOST: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-{{ env }}/data/{{ app_name }}:CATALOGUE_HOST token={{ token }} url=http://vault-int.srikanth553.store:8200') }}"
       CATALOGUE_PORT: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-{{ env }}/data/{{ app_name }}:CATALOGUE_PORT token={{ token }} url=http://vault-int.srikanth553.store:8200') }}"
       REDIS_HOST: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=roboshop-{{ env }}/data/{{ app_name }}:REDIS_HOST token={{ token }} url=http://vault-int.srikanth553.store:8200') }}"
-
-    
